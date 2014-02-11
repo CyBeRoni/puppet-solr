@@ -89,8 +89,10 @@ class solr::config(
     require   => File["${solr_home}/solr.xml"],
   }
 
-  solr::core { $cores:
-    require   =>  File["${jetty_home}/webapps/solr"],
+  if $cores {
+    solr::core { $cores:
+      require   =>  File["${jetty_home}/webapps/solr"],
+    }
   }
 }
 

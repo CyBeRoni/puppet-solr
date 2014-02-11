@@ -36,19 +36,12 @@
 # Copyright 2012-2013 Vamsee Kanakala, unless otherwise noted.
 #
 class solr (
-  $cores      = 'UNSET'
-) {
-
-  include solr::params
-
-  $all_cores = $cores ? {
-    'UNSET'   => $::solr::params::cores,
-    default   => $cores,
-  }
+  $cores = $::solr::params::cores
+) inherits solr::params {
 
   class {'solr::install': } ->
   class {'solr::config':
-    cores => $all_cores
+    cores => $cores
   } ~>
   class {'solr::service': } ->
   Class['solr']
