@@ -26,6 +26,9 @@ class solr::config(
   file { '/etc/default/jetty':
     ensure  => file,
     source  => 'puppet:///modules/solr/jetty-default',
+    owner   => 'root',
+    group   => 'root',
+    mode    => 0644,
     require => Package['jetty'],
   }
 
@@ -38,6 +41,7 @@ class solr::config(
 
   # download only if WEB-INF is not present and tgz file is not in /tmp:
   exec { 'solr-download':
+    path      => ['/usr/bin', '/usr/sbin', '/bin'],
     command   =>  "wget ${download_site}/${solr_version}/${file_name}",
     cwd       =>  '/tmp',
     creates   =>  "/tmp/${file_name}",
