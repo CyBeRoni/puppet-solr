@@ -7,9 +7,16 @@
 #
 class solr::params {
 
-  $jetty_home = '/usr/share/jetty'
-  $solr_home = '/usr/share/solr'
-  $solr_version = '4.4.0'
+  $service = 'solr'
+  $jetty_home = '/usr/share/solr'
+  $solr_home = "${jetty_home}/solr"
+  $jetty_logs = "/var/log/solr"
+  $jetty_default = "/etc/default/${service}"
+  $solr_version = '4.6.1'
+  $owner = 'solr'
+  $group = 'solr'
+  $host = '0.0.0.0'
+  $port = '8080'
   $cores = ['default']
 
 }

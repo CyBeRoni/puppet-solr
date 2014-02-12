@@ -8,15 +8,15 @@ VERBOSE=yes
 
 # Run Jetty as this user ID (default: jetty)
 # Set this to an empty string to prevent Jetty from starting automatically
-#JETTY_USER=jetty
+JETTY_USER=<%= scope['solr::user'] %>
 
 # Listen to connections from this network host
 # Use 0.0.0.0 as host to accept all connections.
 # Uncomment to restrict access to localhost
-JETTY_HOST=0.0.0.0
+JETTY_HOST=<%= scope['solr::host'] %>
 
 # The network port used by Jetty
-JETTY_PORT=8080
+JETTY_PORT=<%= scope['solr::port'] %>
 
 # Timeout in seconds for the shutdown of all webapps
 #JETTY_SHUTDOWN=30
@@ -25,7 +25,7 @@ JETTY_PORT=8080
 #JETTY_ARGS=
 
 # Extra options to pass to the JVM         
-JAVA_OPTIONS="-Dsolr.solr.home=/usr/share/solr $JAVA_OPTIONS"
+JAVA_OPTIONS="-Dsolr.solr.home=<%= scope['solr::solr_home'] %> $JAVA_OPTIONS"
 
 # Home of Java installation.
 # JAVA_HOME=
@@ -46,3 +46,6 @@ JDK_DIRS="/usr/lib/jvm/default-java /usr/lib/jvm/java-6-sun"
 
 # Default for number of days to keep old log files in /var/log/jetty/
 #LOGFILE_DAYS=14
+
+JETTY_HOME=<%= scope['solr::jetty_home'] %>
+JETTY_LOGS=<%= scope['solr::jetty_logs'] %>

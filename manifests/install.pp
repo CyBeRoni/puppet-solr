@@ -11,15 +11,15 @@ class solr::install {
     ensure  => present,
   }
 
-  package { 'jetty':
-    ensure  => present,
-    require => Package['default-jdk'],
-  }
+  # package { 'jetty':
+  #   ensure  => present,
+  #   require => Package['default-jdk'],
+  # }
 
-  package { 'libjetty-extra':
-    ensure  => present,
-    require => Package['jetty'],
-  }
+  # package { 'libjetty-extra':
+  #   ensure  => present,
+  #   require => Package['jetty'],
+  # }
 
   package { 'wget':
     ensure  => present,

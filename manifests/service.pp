@@ -6,12 +6,20 @@
 #
 class solr::service {
 
+  file { "/etc/init.d/solr":
+    ensure    => 'file',
+    owner     => 'root',
+    group     => 'root',
+    mode      => 0755,
+    content   => template('solr/initd-solr.erb'),
+  } ->
+
   #restart after copying new config
-  service { 'jetty':
+  service { 'solr':
     ensure      => running,
     hasrestart  => true,
-    hasstatus   => true,
-    require     => Package['jetty'],
+    hasstatus   => false,
+    enable      => true,
   }
 
 }

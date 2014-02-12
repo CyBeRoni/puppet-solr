@@ -36,13 +36,19 @@
 # Copyright 2012-2013 Vamsee Kanakala, unless otherwise noted.
 #
 class solr (
-  $cores = $::solr::params::cores
+  $cores          = $::solr::params::cores,
+  $home           = $::solr::params::jetty_home,
+  $solr_version   = $::solr::params::solr_version,
+  $host           = $::solr::params::host,
+  $port           = $::solr::params::port,
+  $download_site  = 'http://www.eng.lsu.edu/mirrors/apache/lucene/solr',
+
 ) inherits solr::params {
 
+  $jetty_home = $home
+
   class {'solr::install': } ->
-  class {'solr::config':
-    cores => $cores
-  } ~>
+  class {'solr::config':  } ~>
   class {'solr::service': } ->
   Class['solr']
 

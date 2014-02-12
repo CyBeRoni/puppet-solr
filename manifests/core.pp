@@ -11,33 +11,54 @@
 #
 define solr::core(
   $core_name = $title,
+  $conf_file = {
+    ensure  => directory,
+    recurse => true,
+    owner   => $solr::owner,
+    group   => $solr::group,
+    source  => 'puppet:///modules/solr/conf',
+    notify  => Service['solr'],
+  },
+  $properties = true
 ) {
-  include solr::params
 
-  $solr_home  = $solr::params::solr_home
+  $solr_home  = $solr::solr_home
 
   file { "${solr_home}/${core_name}":
     ensure  => directory,
-    owner   => 'jetty',
-    group   => 'jetty',
+    owner   => $solr::owner,
+    group   => $solr::group,
     require => File[$solr_home],
   }
 
   #Copy its config over
-  file { "${solr_home}/${core_name}/conf":
-    ensure  => directory,
-    recurse => true,
-    source  => 'puppet:///modules/solr/conf',
-    require => File["${solr_home}/${core_name}"],
+  if $conf_file {
+    create_resources('file', {"${solr_home}/${core_name}/conf" => $conf_file})
+  }
+  
+  $defaultProperties = {name => $core_name}
+  $emptyProperties = {}
+
+  $finalProps = $properties ? { 
+    true => $defaultProperties, 
+    default => $properties 
   }
 
-  #Finally, create the data directory where solr stores
-  #its indexes with proper directory ownership/permissions.
-  file { "/var/lib/solr/${core_name}":
-    ensure  => directory,
-    owner   => 'jetty',
-    group   => 'jetty',
-    require => File["${solr_home}/${core_name}/conf"],
+  #Copy the jetty config file
+  file { "${solr_home}/${core_name}/core.properties":
+    ensure  => file,
+    content  => template('solr/core.properties.erb'),
+    owner   => $solr::owner,
+    group   => $solr::group,
+    mode    => 0644,
+    notify  => Service['solr'],
   }
+
+
+  # <% @cores.each do |core|  %>
+  #   <core name="<%= core -%>" instanceDir="<%= core -%>"
+  #         dataDir="/var/lib/solr/<%= core -%>" />
+  # <% end if @cores%>
+
 
 }
