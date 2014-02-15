@@ -75,7 +75,7 @@ class solr::config(
   # extract example directory containing solr & jetty
   exec { 'copy-solr':
     path      =>  ['/usr/bin', '/usr/sbin', '/bin'],
-    command   =>  "cp -R cloud-scripts contexts etc lib resources solr-webapp webapps start.jar ${jetty_home}",
+    command   =>  "cp -R cloud-scripts contexts etc lib resources solr-webapp webapps start.jar ${jetty_home}; chown -R solr:solr ${jetty_home}/*",
     cwd       =>  "$tmp_pkg/example",
     onlyif    =>  "test ! -d ${solr_home}",
   } ->
