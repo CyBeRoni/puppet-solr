@@ -42,6 +42,7 @@ class solr (
   $host           = $::solr::params::host,
   $port           = $::solr::params::port,
   $download_site  = 'http://www.eng.lsu.edu/mirrors/apache/lucene/solr',
+  $download_url   = undef,
 
 ) inherits solr::params {
 

@@ -20,9 +20,11 @@ class solr::config(
   $solr_home      = $::solr::solr_home
   $solr_version   = $::solr::solr_version
   $download_site  = $::solr::download_site
+  $download_url   = $::solr::download_url ? {undef => "${download_site}/${solr_version}/${file_name}", default => $::solr::download_url}
   
-  $file_name      = "solr-${solr_version}.tgz"
-  $tmp_pkg        = "/tmp/solr-${solr_version}"
+  $file_name      = "solr-${solr_version}"
+  $pack_name      = "${file_name}.tgz"
+  $unpack_path    = "/tmp/${file_name}-unpack"
 
 
   user {$solr::owner:
@@ -57,26 +59,27 @@ class solr::config(
   # download only if solr_home is not present and tgz file is not in /tmp:
   exec { 'solr-download':
     path      => ['/usr/bin', '/usr/sbin', '/bin'],
-    command   =>  "wget ${download_site}/${solr_version}/${file_name}",
+    command   =>  "wget ${download_url} -O ${pack_name}.tmp --no-check-certificate && mv ${pack_name}.tmp ${pack_name}",
     cwd       =>  '/tmp',
-    creates   =>  "/tmp/${file_name}",
-    onlyif    =>  "test ! -d ${solr_home}/etc && test ! -f /tmp/${file_name}",
+    creates   =>  "/tmp/${pack_name}",
+    onlyif    =>  "test ! -d ${solr_home}/etc",
     timeout   =>  0,
     require   => File[$jetty_home],
   } ->
 
   exec { 'extract-solr':
     path      =>  ['/usr/bin', '/usr/sbin', '/bin'],
-    command   =>  "tar xzvf ${file_name}",
+    command   =>  "tar xzvf ${pack_name} && mv ${file_name} ${unpack_path}",
     cwd       =>  '/tmp',
-    onlyif    =>  "test -f /tmp/${file_name} && test ! -d ${tmp_pkg}",
+    creates   =>  "${unpack_path}",
+    onlyif    =>  "test -f /tmp/${pack_name}",
   } ->
 
   # extract example directory containing solr & jetty
   exec { 'copy-solr':
     path      =>  ['/usr/bin', '/usr/sbin', '/bin'],
     command   =>  "cp -R cloud-scripts contexts etc lib resources solr-webapp webapps start.jar ${jetty_home}; chown -R solr:solr ${jetty_home}/*",
-    cwd       =>  "$tmp_pkg/example",
+    cwd       =>  "$unpack_path/example",
     onlyif    =>  "test ! -d ${solr_home}/etc",
   } ->
 
