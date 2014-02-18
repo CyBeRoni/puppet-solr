@@ -60,7 +60,7 @@ class solr::config(
     command   =>  "wget ${download_site}/${solr_version}/${file_name}",
     cwd       =>  '/tmp',
     creates   =>  "/tmp/${file_name}",
-    onlyif    =>  "test ! -d ${solr_home} && test ! -f /tmp/${file_name}",
+    onlyif    =>  "test ! -d ${solr_home}/etc && test ! -f /tmp/${file_name}",
     timeout   =>  0,
     require   => File[$jetty_home],
   } ->
@@ -77,7 +77,7 @@ class solr::config(
     path      =>  ['/usr/bin', '/usr/sbin', '/bin'],
     command   =>  "cp -R cloud-scripts contexts etc lib resources solr-webapp webapps start.jar ${jetty_home}; chown -R solr:solr ${jetty_home}/*",
     cwd       =>  "$tmp_pkg/example",
-    onlyif    =>  "test ! -d ${solr_home}",
+    onlyif    =>  "test ! -d ${solr_home}/etc",
   } ->
 
   #Copy the jetty config file
