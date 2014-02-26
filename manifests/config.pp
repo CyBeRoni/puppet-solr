@@ -80,7 +80,8 @@ class solr::config(
     path      =>  ['/usr/bin', '/usr/sbin', '/bin'],
     command   =>  "cp -R cloud-scripts contexts etc lib resources solr-webapp webapps start.jar ${jetty_home}; chown -R solr:solr ${jetty_home}/*",
     cwd       =>  "$unpack_path/example",
-    onlyif    =>  "test ! -d ${solr_home}/etc",
+    creates   =>  "${jetty_home}/etc",
+    onlyif    =>  "test -d ${unpack_path}",
   } ->
 
   #Copy the jetty config file
