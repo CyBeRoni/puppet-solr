@@ -29,7 +29,7 @@
 <solr>
 
   <solrcloud>
-    <str name="host">${host:}</str>
+    <str name="host">${jetty.host:127.0.0.1}</str>
     <int name="hostPort">${jetty.port:8983}</int>
     <str name="hostContext">${hostContext:solr}</str>
     <int name="zkClientTimeout">${zkClientTimeout:15000}</int>
