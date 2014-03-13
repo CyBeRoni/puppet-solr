@@ -8,8 +8,9 @@
 class solr::params {
 
   $service = 'solr'
-  $jetty_home = '/usr/share/solr'
+  $jetty_home = '/srv/solr'
   $solr_home = "${jetty_home}/solr"
+  $data_home = "${solr_home}/cores"
   $jetty_logs = "/var/log/solr"
   $jetty_default = "/etc/default/${service}"
   $solr_version = '4.7.0'

@@ -23,31 +23,43 @@ define solr::core(
 ) {
 
   $solr_home  = $solr::solr_home
+  $data_home  = $solr::data_home
 
-  file { "${solr_home}/${core_name}":
+  file { "${data_home}/${core_name}":
     ensure  => directory,
     owner   => $solr::owner,
     group   => $solr::group,
     require => File[$solr_home],
-  }
+  } ->
+  file { "${data_home}/${core_name}/data":
+    ensure => directory,
+    owner  => $solr::owner,
+    group  => $solr::group,
+    mode   => '0755',
+  } 
 
   #Copy its config over
   if $conf_file {
-    create_resources('file', {"${solr_home}/${core_name}/conf" => $conf_file})
+    create_resources('file', {"${data_home}/${core_name}/conf" => $conf_file})
   }
-  
-  $defaultProperties = {name => $core_name}
+
+  $defaultProperties = {
+    name    => $core_name,
+    dataDir => "${data_home}/${core_name}/data"
+  }
   $emptyProperties = {}
 
-  $finalProps = $properties ? { 
-    true => $defaultProperties, 
-    default => $properties 
+  $finalProps = $properties ? {
+    true => $defaultProperties,
+    default => $properties
   }
 
+
+
   #Copy the jetty config file
-  file { "${solr_home}/${core_name}/core.properties":
+  file { "${data_home}/${core_name}/core.properties":
     ensure  => file,
-    content  => template('solr/core.properties.erb'),
+    content => template('solr/core.properties.erb'),
     owner   => $solr::owner,
     group   => $solr::group,
     mode    => 0644,

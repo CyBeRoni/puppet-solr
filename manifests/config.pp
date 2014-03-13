@@ -13,17 +13,17 @@
 # - Links solr home directory to jetty webapps directory
 #
 class solr::config(
+  $cores = false
 ) {
 
-  $cores = false
   $jetty_home     = $::solr::jetty_home
   $solr_home      = $::solr::solr_home
   $solr_version   = $::solr::solr_version
   $download_site  = $::solr::download_site
-  $download_url   = $::solr::download_url ? {undef => "${download_site}/${solr_version}/${file_name}", default => $::solr::download_url}
-  
   $file_name      = "solr-${solr_version}"
   $pack_name      = "${file_name}.tgz"
+  $download_url   = $::solr::download_url ? {undef => "${download_site}/${solr_version}/${pack_name}", default => $::solr::download_url}
+  
   $unpack_path    = "/tmp/${file_name}-unpack"
 
 
@@ -56,15 +56,15 @@ class solr::config(
     # require => Package['jetty'],
   } ->
 
-  # download only if solr_home is not present and tgz file is not in /tmp:
+  # download only if solr_home is not present
   exec { 'solr-download':
-    path      => ['/usr/bin', '/usr/sbin', '/bin'],
-    command   =>  "wget ${download_url} -O ${pack_name}.tmp --no-check-certificate && mv ${pack_name}.tmp ${pack_name}",
-    cwd       =>  '/tmp',
-    creates   =>  "/tmp/${pack_name}",
-    onlyif    =>  "test ! -d ${solr_home}/etc",
-    timeout   =>  0,
-    require   => File[$jetty_home],
+    path    => ['/usr/bin', '/usr/sbin', '/bin'],
+    command => "wget ${download_url} -O ${pack_name}.tmp --no-check-certificate && mv ${pack_name}.tmp ${pack_name}",
+    cwd     => '/tmp',
+    onlyif  => "test ! -d ${solr_home}/etc",
+    creates => "/tmp/${pack_name}",
+    timeout => 0,
+    require => File[$jetty_home],
   } ->
 
   exec { 'extract-solr':
@@ -118,6 +118,13 @@ class solr::config(
   #   target    => $solr_home,
   #   require   => File["${solr_home}/solr.xml"],
   # }
+
+  file { $solr::data_home:
+    ensure => directory,
+    owner  => $solr::owner,
+    group  => $solr::group,
+    mode   => 0755,
+  }
 
   if $cores {
     solr::core { $cores:

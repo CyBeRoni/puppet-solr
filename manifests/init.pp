@@ -38,6 +38,7 @@
 class solr (
   $cores          = $::solr::params::cores,
   $home           = $::solr::params::jetty_home,
+  $data_home      = $::solr::params::data_home,
   $solr_version   = $::solr::params::solr_version,
   $host           = $::solr::params::host,
   $port           = $::solr::params::port,
@@ -49,7 +50,9 @@ class solr (
   $jetty_home = $home
 
   class {'solr::install': } ->
-  class {'solr::config':  } ~>
+  class {'solr::config': 
+    cores => $cores 
+  } ~>
   class {'solr::service': } ->
   Class['solr']
 
