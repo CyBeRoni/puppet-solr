@@ -11,15 +11,7 @@
 #
 define solr::core(
   $core_name = $title,
-  $conf_file = {
-    ensure  => directory,
-    recurse => true,
-    owner   => $solr::owner,
-    group   => $solr::group,
-    source  => 'puppet:///modules/solr/conf',
-    notify  => Service['solr'],
-  },
-  $properties = true
+  $properties = {}
 ) {
 
   $solr_home  = $solr::solr_home
@@ -31,30 +23,29 @@ define solr::core(
     group   => $solr::group,
     require => File[$solr_home],
   } ->
+  #Copy its config over
+  file { "${data_home}/${core_name}/conf":
+    ensure  => directory,
+    recurse => true,
+    owner   => $solr::owner,
+    group   => $solr::group,
+    source  => 'puppet:///modules/solr/conf',
+    notify  => Service['solr'],
+  } ->
   file { "${data_home}/${core_name}/data":
     ensure => directory,
     owner  => $solr::owner,
     group  => $solr::group,
     mode   => '0755',
-  } 
-
-  #Copy its config over
-  if $conf_file {
-    create_resources('file', {"${data_home}/${core_name}/conf" => $conf_file})
   }
+
 
   $defaultProperties = {
     name    => $core_name,
     dataDir => "${data_home}/${core_name}/data"
   }
-  $emptyProperties = {}
 
-  $finalProps = $properties ? {
-    true => $defaultProperties,
-    default => $properties
-  }
-
-
+  $finalProps = merge($defaultProperties, $properties)
 
   #Copy the jetty config file
   file { "${data_home}/${core_name}/core.properties":

@@ -13,7 +13,7 @@
 # - Links solr home directory to jetty webapps directory
 #
 class solr::config(
-  $cores = false
+  $cores      = false,
 ) {
 
   $jetty_home     = $::solr::jetty_home
@@ -127,8 +127,7 @@ class solr::config(
   }
 
   if $cores {
-    solr::core { $cores:
-    }
+    create_resources('::solr:core', $cores)
   }
 }
 
