@@ -29,6 +29,7 @@ define solr::core(
     recurse => true,
     owner   => $solr::owner,
     group   => $solr::group,
+    purge   => true,
     source  => 'puppet:///modules/solr/conf',
     notify  => Service['solr'],
   } ->
