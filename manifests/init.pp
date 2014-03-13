@@ -41,7 +41,7 @@ class solr (
   $solr_version   = $::solr::params::solr_version,
   $host           = $::solr::params::host,
   $port           = $::solr::params::port,
-  $download_site  = 'http://archive.apache.org/dist/lucene/solr/4.7.0/',
+  $download_site  = 'http://archive.apache.org/dist/lucene/solr',
   $download_url   = undef,
 
 ) inherits solr::params {
