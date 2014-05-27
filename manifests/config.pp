@@ -61,7 +61,7 @@ class solr::config(
     path    => ['/usr/bin', '/usr/sbin', '/bin'],
     command => "wget ${download_url} -O ${pack_name}.tmp --no-check-certificate && mv ${pack_name}.tmp ${pack_name}",
     cwd     => '/tmp',
-    onlyif  => "test ! -d ${solr_home}/etc",
+    onlyif  => "test ! -d ${solr_home}",
     creates => "/tmp/${pack_name}",
     timeout => 0,
     require => File[$jetty_home],
