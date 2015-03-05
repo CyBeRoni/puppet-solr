@@ -30,7 +30,7 @@ class solr::config(
   user {$solr::owner:
     ensure => present,
     home => $jetty_home,
-    shell => '/sbin/false',
+    shell => '/bin/false',
   } ->
 
   # create installation home
