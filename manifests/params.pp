@@ -13,7 +13,7 @@ class solr::params {
   $data_home = "${solr_home}/cores"
   $jetty_logs = "/var/log/solr"
   $jetty_default = "/etc/default/${service}"
-  $solr_version = '4.7.0'
+  $solr_version = '4.7.2'
   $owner = 'solr'
   $group = 'solr'
   $host = '0.0.0.0'
