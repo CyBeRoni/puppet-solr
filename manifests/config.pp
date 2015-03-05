@@ -40,12 +40,6 @@ class solr::config(
     group     => $solr::group,
   } ->
 
-  # create installation home
-  file { $solr_home:
-    ensure    => directory,
-    owner     => $solr::owner,
-    group     => $solr::group,
-  } ->
 
   #Copy the jetty config file
   file { $solr::jetty_logs:
@@ -65,6 +59,13 @@ class solr::config(
     creates => "/tmp/${pack_name}",
     timeout => 0,
     require => File[$jetty_home],
+  } ->
+  # create installation home
+
+  file { $solr_home:
+    ensure    => directory,
+    owner     => $solr::owner,
+    group     => $solr::group,
   } ->
 
   exec { 'extract-solr':
